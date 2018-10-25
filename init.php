@@ -2,10 +2,10 @@
 /**
  * Plugin Name: HYP Review Reminder
  * Plugin URI: https://github.com/hypericumimpex/hyp-review-reminder/
- * Description: <code><strong>HYP Review Reminder</strong></code> allows you to increase the number of quality reviews for the products of your store, by automatically reminding users of adding one. Choose your best communication strategy to encourage them to express their opinion and you'll see your store grow every day more!
+ * Description: <code><strong>HYP Review Reminder</strong></code> vă permite să creșteți evaluarile produselor prin reamintirea automată a utilizatorilor de adăugarea acestora.
  * Author: Romeo C.
  * Text Domain: yith-woocommerce-review-reminder
- * Version: 1.4.3
+ * Version: 1.4.4
  * Author URI: https://romeocovaci.com/
  * WC requires at least: 3.3.0
  * WC tested up to: 3.5.x
@@ -22,7 +22,7 @@ if ( ! function_exists( 'is_plugin_active' ) ) {
 function ywrr_install_premium_woocommerce_admin_notice() {
 	?>
 	<div class="error">
-		<p><?php _e( 'HYP Review Reminder is enabled but not effective. It requires WooCommerce in order to work.', 'yith-woocommerce-review-reminder' ); ?></p>
+		<p><?php _e( 'YITH WooCommerce Review Reminder is enabled but not effective. It requires WooCommerce in order to work.', 'yith-woocommerce-review-reminder' ); ?></p>
 	</div>
 	<?php
 }
@@ -34,7 +34,7 @@ if ( ! function_exists( 'yit_deactive_free_version' ) ) {
 yit_deactive_free_version( 'YWRR_FREE_INIT', plugin_basename( __FILE__ ) );
 
 if ( ! defined( 'YWRR_VERSION' ) ) {
-	define( 'YWRR_VERSION', '1.4.3' );
+	define( 'YWRR_VERSION', '1.4.4' );
 }
 
 if ( ! defined( 'YWRR_INIT' ) ) {
