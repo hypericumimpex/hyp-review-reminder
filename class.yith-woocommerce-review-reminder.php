@@ -181,7 +181,8 @@ if ( ! class_exists( 'YWRR_Review_Reminder' ) ) {
 				include_once( 'templates/admin/blocklist-table.php' );
 			}
 
-			if ( defined( 'WCML_VERSION' ) ) {
+			$is_wpml_configured = apply_filters( 'wpml_setting', false, 'setup_complete' );
+			if ( $is_wpml_configured && defined( 'WCML_VERSION' ) ) {
 				require_once( 'includes/emails/class.ywrr-multilingual-email.php' );
 			}
 
@@ -623,7 +624,7 @@ if ( ! class_exists( 'YWRR_Review_Reminder' ) ) {
 		 */
 		public function ywrr_save_request_option( $order_id ) {
 
-			if ( empty( $_POST['ywrr_receive_requests'] ) && isset( $_POST['billing_email'] ) ) {
+			if ( empty( $_POST['ywrr_receive_requests'] ) && isset( $_POST['billing_email'] ) && $_POST['billing_email'] != '' ) {
 
 				YWRR_Blocklist()->add_to_blocklist( get_current_user_id(), $_POST['billing_email'] );
 
@@ -674,15 +675,19 @@ if ( ! class_exists( 'YWRR_Review_Reminder' ) ) {
 		 */
 		public function ywrr_save_request_option_my_account( $customer_id ) {
 
-			if ( isset( $_POST['ywrr_receive_requests'] ) ) {
+			if ( isset( $_POST['billing_email'] ) && $_POST['billing_email'] != '' ) {
 
-				YWRR_Blocklist()->remove_from_blocklist( $customer_id );
+				if ( isset( $_POST['ywrr_receive_requests'] ) ) {
 
-			} else {
+					YWRR_Blocklist()->remove_from_blocklist( $customer_id );
 
-				$email = get_user_meta( $customer_id, 'billing_email' );
+				} else {
 
-				YWRR_Blocklist()->add_to_blocklist( $customer_id, $email );
+					$email = get_user_meta( $customer_id, 'billing_email' );
+
+					YWRR_Blocklist()->add_to_blocklist( $customer_id, $email );
+
+				}
 
 			}
 

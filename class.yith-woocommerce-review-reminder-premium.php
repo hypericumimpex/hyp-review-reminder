@@ -187,7 +187,6 @@ if ( ! class_exists( 'YWRR_Review_Reminder_Premium' ) ) {
 		}
 
 
-
 		/**
 		 * Render the schedule column
 		 *
@@ -259,7 +258,7 @@ if ( ! class_exists( 'YWRR_Review_Reminder_Premium' ) ) {
 
 						global $wpdb;
 
-						$schedule   = $wpdb->get_var( $wpdb->prepare( "SELECT scheduled_date FROM {$wpdb->prefix}ywrr_email_schedule WHERE order_id = %d AND mail_status = 'pending'", $post->ID ) );
+						$schedule   = $wpdb->get_row( $wpdb->prepare( "SELECT scheduled_date, mail_status FROM {$wpdb->prefix}ywrr_email_schedule WHERE order_id = %d AND mail_status <> 'cancelled'", $post->ID ) );
 						$order_date = yit_get_prop( $order, 'date_modified' );
 						if ( ! $order_date ) {
 							$order_date = yit_get_prop( $order, 'date_created' );
@@ -279,7 +278,19 @@ if ( ! class_exists( 'YWRR_Review_Reminder_Premium' ) ) {
                             <div class="clear"></div>
                             <div class="ywrr-send-title" style="display: <?php echo( $schedule ? 'block' : 'none' ) ?>">
 
-								<?php printf( __( 'The request will be sent on %s', 'yith-woocommerce-review-reminder' ), '<span class="ywrr-send-date">' . $schedule . '</span>' ); ?>
+								<?php
+								if ( $schedule ) {
+
+									if ( $schedule->mail_status == 'pending' ) {
+										$message = __( 'The request will be sent on %s', 'yith-woocommerce-review-reminder' );
+									} else {
+										$message = __( 'The request was sent on %s', 'yith-woocommerce-review-reminder' );
+									}
+
+									printf( $message, '<span class="ywrr-send-date">' . date_i18n( get_option( 'date_format' ), yit_datetime_to_timestamp( $schedule->scheduled_date ) ) . '</span>' );
+
+								}
+								?>
 
                             </div>
                             <div class="clear"></div>
@@ -531,9 +542,9 @@ if ( ! class_exists( 'YWRR_Review_Reminder_Premium' ) ) {
 
 				?>
                 .ywrr-table td.title-column a{
-                color:<?php echo $meta[ 'base_color' ]?>;
+                color:<?php echo $meta['base_color'] ?>;
                 }
-                <?php
+				<?php
 
 			}
 
@@ -570,43 +581,43 @@ if ( ! class_exists( 'YWRR_Review_Reminder_Premium' ) ) {
 			?>
 
             .ywrr-table {
-                border: none;
+            border: none;
             }
 
             .ywrr-table td {
-                border: none;
-                border-bottom: 1px solid #e0e7f0;
-                text-align: left;
-                vertical-align: top;
-                padding: 10px 0!important;
+            border: none;
+            border-bottom: 1px solid #e0e7f0;
+            text-align: left;
+            vertical-align: top;
+            padding: 10px 0!important;
             }
 
             .ywrr-table td.picture-column {
-                width: 135px;
-                padding: 10px 20px 10px 0 !important;
+            width: 135px;
+            padding: 10px 20px 10px 0 !important;
             }
 
             .ywrr-table td.picture-column a {
-                display: block;
+            display: block;
             }
 
             .ywrr-table td.picture-column a img {
-                margin: 0!important;
-                max-width: 135px;
+            margin: 0!important;
+            max-width: 135px;
             }
 
             .ywrr-table td.title-column a {
-                font-size: 16px;
-                font-weight: bold!important;
-                text-decoration: none;
-                display: block:
+            font-size: 16px;
+            font-weight: bold!important;
+            text-decoration: none;
+            display: block:
             }
 
             .ywrr-table td.title-column a .stars{
-                display: block;
-                font-size: 11px;
-                color: #6e6e6e;
-                text-transform: uppercase:
+            display: block;
+            font-size: 11px;
+            color: #6e6e6e;
+            text-transform: uppercase:
             }
 
 			<?php

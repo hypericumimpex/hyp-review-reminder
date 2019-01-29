@@ -86,16 +86,20 @@ if ( class_exists( 'YITH_WooCommerce_Sequential_Order_Number' ) ) {
 
 }
 
+$wrapping_tag = apply_filters( 'ywrr_placeholder_wrapping_tags', 'b' );
+$opening_tag  = ( $wrapping_tag != '' ? '<' . $wrapping_tag . '>' : '' );
+$closing_tag  = ( $wrapping_tag != '' ? '</' . $wrapping_tag . '>' : '' );
+
 $replace = array(
-	'<b>' . $billing_first_name . '</b>',
-	'<b>' . $billing_email . '</b>',
-	'<b>' . get_option( 'blogname' ) . '</b>',
+	$opening_tag . $billing_first_name . $closing_tag,
+	$opening_tag . $billing_email . $closing_tag,
+	$opening_tag . get_option( 'blogname' ) . $closing_tag,
 	$order_id,
-	'<b>' . $order_id . '</b>',
-	'<b>' . YITH_WRR()->format_date( date( 'Y-m-d H:i:s', yit_datetime_to_timestamp( $order_date ) ) ) . '</b>',
-	'<b>' . YITH_WRR()->format_date( date( 'Y-m-d H:i:s', yit_datetime_to_timestamp( $modified_date ) ) ) . '</b>',
+	$opening_tag . $order_id . $closing_tag,
+	$opening_tag . YITH_WRR()->format_date( date( 'Y-m-d H:i:s', yit_datetime_to_timestamp( $order_date ) ) ) . $closing_tag,
+	$opening_tag . YITH_WRR()->format_date( date( 'Y-m-d H:i:s', yit_datetime_to_timestamp( $modified_date ) ) ) . $closing_tag,
 	$review_list,
-	'<b>' . $days_ago . '</b>',
+	$opening_tag . $days_ago . $closing_tag,
 	( $show_unsubscribe_link ? '' : $unsubscribe_link )
 );
 

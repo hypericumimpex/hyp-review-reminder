@@ -43,7 +43,7 @@ if ( ! class_exists( 'YWRR_Schedule' ) ) {
 
 			if ( is_null( self::$instance ) ) {
 
-				self::$instance = new self( $_REQUEST );
+				self::$instance = new self();
 
 			}
 
@@ -55,7 +55,7 @@ if ( ! class_exists( 'YWRR_Schedule' ) ) {
 		 * Constructor
 		 *
 		 * @since   1.0.0
-		 * @return  mixed
+		 * @return  void
 		 * @author  Alberto Ruggiero
 		 */
 		public function __construct() {
@@ -64,6 +64,9 @@ if ( ! class_exists( 'YWRR_Schedule' ) ) {
 
 				add_action( 'woocommerce_order_status_completed', array( $this, 'schedule_mail' ) );
 				add_action( 'ywrr_daily_send_mail_job', array( $this, 'daily_schedule' ) );
+
+				add_action( 'trashed_post', array( $this, 'on_order_deletion' ) );
+				add_action( 'after_delete_post', array( $this, 'on_order_deletion' ) );
 
 			}
 
@@ -88,6 +91,14 @@ if ( ! class_exists( 'YWRR_Schedule' ) ) {
 				$was_quote = YITH_YWRAQ_Order_Request()->is_quote( $order_id );
 			}
 
+			$order          = wc_get_order( $order_id );
+			$customer_id    = yit_get_prop( $order, '_customer_user' );
+			$customer_email = yit_get_prop( $order, '_billing_email' );
+
+			if ( YWRR_Blocklist()->check_blocklist( $customer_id, $customer_email ) != true ) {
+				return __( 'This mail cannot be scheduled', 'yith-woocommerce-review-reminder' );
+
+			}
 			if ( ( ! wp_get_post_parent_id( $order_id ) || ( wp_get_post_parent_id( $order_id ) && $was_quote ) ) && $this->check_exists_schedule( $order_id ) == 0 ) {
 
 				$forced_list = maybe_serialize( $forced_list );
@@ -257,6 +268,28 @@ if ( ! class_exists( 'YWRR_Schedule' ) ) {
 				}
 
 			}
+
+		}
+
+		/**
+		 * Removes from schedule list if order is deleted
+		 *
+		 * @since   1.0.0
+		 *
+		 * @param   $post_id
+		 *
+		 * @return  void
+		 * @author  Alberto Ruggiero
+		 */
+		public function on_order_deletion( $post_id ) {
+
+			global $wpdb;
+
+			$wpdb->delete(
+				$wpdb->prefix . 'ywrr_email_schedule',
+				array( 'order_id' => $post_id ),
+				array( '%d' )
+			);
 
 		}
 

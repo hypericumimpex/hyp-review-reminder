@@ -43,7 +43,7 @@ if ( ! class_exists( 'YWRR_Schedule_Premium' ) ) {
 
 			if ( is_null( self::$instance ) ) {
 
-				self::$instance = new self( $_REQUEST );
+				self::$instance = new self();
 
 			}
 
@@ -55,7 +55,7 @@ if ( ! class_exists( 'YWRR_Schedule_Premium' ) ) {
 		 * Constructor
 		 *
 		 * @since   1.0.0
-		 * @return  mixed
+		 * @return  void
 		 * @author  Alberto Ruggiero
 		 */
 		public function __construct() {

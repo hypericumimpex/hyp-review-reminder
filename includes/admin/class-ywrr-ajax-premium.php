@@ -131,15 +131,15 @@ if ( ! class_exists( 'YWRR_Ajax_Premium' ) ) {
 
 				} else {*/
 
-					if ( YWRR_Schedule()->check_exists_schedule( $order_id ) != 0 ) {
+				if ( YWRR_Schedule()->check_exists_schedule( $order_id ) != 0 ) {
 
-						$message = YWRR_Schedule_Premium()->reschedule( $order_id, $scheduled_date, $list );
+					$message = YWRR_Schedule_Premium()->reschedule( $order_id, $scheduled_date, $list );
 
-					} else {
+				} else {
 
-						$message = YWRR_Schedule()->schedule_mail( $order_id, $list );
+					$message = YWRR_Schedule()->schedule_mail( $order_id, $list );
 
-					}
+				}
 
 				//}
 
@@ -234,10 +234,16 @@ if ( ! class_exists( 'YWRR_Ajax_Premium' ) ) {
 
 					while ( $query->have_posts() ) {
 
-						$count ++;
 						$query->the_post();
 
-						YWRR_Schedule()->schedule_mail( $query->post->ID );
+						$order          = wc_get_order( $query->post->ID );
+						$customer_id    = yit_get_prop( $order, '_customer_user' );
+						$customer_email = yit_get_prop( $order, '_billing_email' );
+
+						if ( YWRR_Blocklist()->check_blocklist( $customer_id, $customer_email ) == true ) {
+							$count ++;
+							YWRR_Schedule()->schedule_mail( $query->post->ID );
+						}
 
 					}
 
